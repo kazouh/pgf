@@ -24,7 +24,7 @@ import java.util.List;
 public class GeofenceTransitionService extends IntentService {
 
     protected static final String TAG = "GeofenceTransition";
-    public static final String TRANSITION = "net.bagot.pgf.event.TRANSITION";
+    public static final String TRANSITION_EVENT = "net.bagot.pgf.event.TRANSITION";
 
     public GeofenceTransitionService() {
         super(TAG); // worker name
@@ -51,7 +51,7 @@ public class GeofenceTransitionService extends IntentService {
     }
 
     private void notifyTransition(int transitionCode, List<Geofence> geofences) {
-        Intent i = new Intent(TRANSITION);
+        Intent i = new Intent(TRANSITION_EVENT);
         i.putExtra("transitionCode", transitionCode);
         i.putExtra("geofences", geofences.toArray());
         GeofenceTransitionService.this.sendBroadcast(i);

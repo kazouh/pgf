@@ -8,15 +8,15 @@ import java.util.Map;
  * @Author Mathieu BAGOT (mathieu.bagot@univ-ubs.fr)
  * @Date 2016/03/18
  *
- * POI
+ * POIEntity
  *
  * A group of points of interests defined by a group name and
  * a map of geofences (id/geofence object)
  *
  * **************************************************************/
-public class POI {
+public class POIEntity {
     private String groupName;
-    private Map<String, Geofence> poi;
+    private Map<String, Geofence> poiMap;
 
     // ///////////////////////////////////////////////////////////////////////////////////////////
     // Getter / setter
@@ -30,10 +30,10 @@ public class POI {
     }
 
     public Map<String, Geofence> getPOIMap() {
-        return poi;
+        return poiMap;
     }
 
-    public void setPOIMap(Map<String, Geofence> poi) {
-        this.poi = poi;
+    public void setPOIMap(Map<String, Geofence> poiMap) {
+        this.poiMap = poiMap;
     }
 }

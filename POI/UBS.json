@@ -1,8 +1,8 @@
 {
-    "id": "UBS",
-    "poi" : [
+    "groupName": "UBS",
+    "poiList" : [
         {
-            "name":"ensibs", 
+            "id":"ensibs", 
             "lat":"47.644834",
             "lon":"-2.748417",
             "radius":"500"

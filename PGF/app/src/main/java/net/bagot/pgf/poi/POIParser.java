@@ -1,5 +1,7 @@
 package net.bagot.pgf.poi;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
@@ -9,10 +11,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ import java.util.Map;
  *
  * POIParser
  *
- * Parses a json file to a POI object
+ * Parses a json file to a POIEntity object
  *
  * --------------------------
  * JSON scheme :
@@ -44,43 +45,48 @@ public class POIParser {
     private static final String TAG = "POIParser";
 
     /**
-     * Parses the input JSON file to a POI object
-     * @param input file to parse
-     * @return The POI objects instantiated from the input file
+     * Parses the input JSON string to a POIEntity object
+     *
+     * @param json string to parse
+     * @return The POIEntity objects instantiated from the input string
      */
-    public static POI parsePOI(File input) {
-        POI poi = null;
+    public static POIEntity parsePOI(String json) {
+        POIEntity poiEntity = null;
+        JSONObject jsonPOI = null;
 
-        JSONObject jsonPOI = readJSON(input);
+        try {
+            jsonPOI = new JSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
         if (jsonPOI != null) {
             try {
-                // read groupName & poi list
+                // read groupName & poiEntity list
                 String name = jsonPOI.getString("groupName");
                 Map<String, Geofence> poiMap = readPOI(name, jsonPOI.getJSONArray("poiList"));
                 if (poiMap != null && !poiMap.isEmpty()) {
-                    poi = new POI();
-                    poi.setGroupName(name);
-                    poi.setPOIMap(poiMap);
+                    poiEntity = new POIEntity();
+                    poiEntity.setGroupName(name);
+                    poiEntity.setPOIMap(poiMap);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.e(TAG, "parseTrack: Failed to read json object from input:" + input.getName());
+                Log.e(TAG, "parseTrack: Failed to read json object from input:" + json);
             }
         } else {
-            if (input != null) {
-                Log.e(TAG, "parseTrack: Failed to parse to json:" + input.getName());
-            } else {
-                Log.e(TAG, "parseTrack: Input track is null");
-            }
+            Log.e(TAG, "parseTrack: Failed to parse to json:" + json);
         }
-        return poi;
+        return poiEntity;
     }
 
     /**
-     * Parses the list of POI from a JSON array
-     * @param groupName groupName to which the poi belongs
-     * @param jsonPOIList A jsonArray which contains the list of POI
-     * @return A map of the parsed POI (key=id, value=geofence)
+     * Parses the list of POIEntity from a JSON array
+     *
+     * @param groupName   groupName to which the poi belongs
+     * @param jsonPOIList A jsonArray which contains the list of POIEntity
+     * @return A map of the parsed POIEntity (key=id, value=geofence)
      */
     private static Map<String, Geofence> readPOI(String groupName, JSONArray jsonPOIList) {
         Map<String, Geofence> poiMap = new HashMap<>();
@@ -108,7 +114,7 @@ public class POIParser {
                         .setExpirationDuration(Geofence.NEVER_EXPIRE)
                         .setTransitionTypes(
                                 Geofence.GEOFENCE_TRANSITION_ENTER |
-                                Geofence.GEOFENCE_TRANSITION_EXIT
+                                        Geofence.GEOFENCE_TRANSITION_EXIT
                         )
                         .build();
 
@@ -117,48 +123,10 @@ public class POIParser {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.e(TAG, "readPOI: Failed to parse POI from groupName:" + groupName);
+                Log.e(TAG, "readPOI: Failed to parse POIEntity from groupName:" + groupName);
                 return null;
             }
         }
         return poiMap;
-    }
-
-    /**
-     * Reads a file then create a JSONObject from its content
-     * @param input file to read
-     * @return An JSONObject created from the content of the input file
-     */
-    private static JSONObject readJSON(File input) {
-        JSONObject jsonObject;
-        String jsonString;
-
-        BufferedReader reader;
-        try {
-            reader = new BufferedReader(new FileReader(input));
-            StringBuilder sb = new StringBuilder();
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-            jsonString = sb.toString();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        try {
-            jsonObject = new JSONObject(jsonString);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return jsonObject;
     }
 }
