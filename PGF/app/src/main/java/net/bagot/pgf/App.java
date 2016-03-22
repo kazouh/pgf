@@ -18,8 +18,10 @@ import com.google.android.gms.location.Geofence;
 import net.bagot.pgf.geofence.GeofenceTransitionService;
 import net.bagot.pgf.geofence.GeofencesManager;
 import net.bagot.pgf.poi.POIManager;
+import net.bagot.pgf.util.FileLogger;
 import net.bagot.pgf.util.GeofenceHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -63,7 +65,7 @@ public class App extends Activity {
                     Set<String> groupNames = poi.getGroupNames();
                     for (String group : groupNames) {
                         List<Geofence> poiList = poi.getPOIForGroupName(group);
-                        Log.i(TAG, "tracking :" + group +" // nbPOI : "+poiList.size());
+                        Log.i(TAG, "tracking :" + group + " // nbPOI : " + poiList.size());
                         geofences.register(poiList);
                     }
                 } else {
@@ -83,7 +85,7 @@ public class App extends Activity {
 
         // Get ListView object from xml
         final ListView listView = (ListView) findViewById(R.id.logsList);
-        listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, new String[]{});
+        listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, new ArrayList<String>());
 
         // Assign adapter to ListView
         listView.setAdapter(listAdapter);
@@ -102,15 +104,17 @@ public class App extends Activity {
     private final BroadcastReceiver transitionReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            String[] geofences = intent.getStringArrayExtra("geofences");
             int transitionCode = intent.getIntExtra("transitionCode", -1);
-            Geofence[] geofences = (Geofence[]) intent.getSerializableExtra("geofences");
 
-            Log.i(TAG, "transitionReceiver: event");
-
-            if (transitionCode != -1 && geofences != null) {
-                for (Geofence geofence : geofences) {
-                    listAdapter.add(geofence.getRequestId() + ":" + GeofenceHelper.getTransitionString(context, transitionCode));
+            if (geofences != null && transitionCode != -1) {
+                for (int i = 0; i < geofences.length; i++) {
+                    Log.i(TAG, "transitionReceiver: event : Geofence(" + geofences[i] + ", " + GeofenceHelper.getTransitionString(App.this, transitionCode) + ")");
+                    String message = geofences[i] + "," + GeofenceHelper.getTransitionString(App.this, transitionCode);
+                    listAdapter.add(message);
                     listAdapter.notifyDataSetChanged();
+
+                    FileLogger.getInstance().log("TRANSITION", message);
                 }
             }
         }

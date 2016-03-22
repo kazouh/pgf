@@ -10,7 +10,6 @@ import android.util.Log;
 import com.google.android.gms.location.Geofence;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;

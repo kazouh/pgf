@@ -22,3 +22,6 @@ gradle/
 gradlew
 gradlew.bat
 google_app_id.xml
+
+# POI
+POI/

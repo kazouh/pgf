@@ -51,9 +51,17 @@ public class GeofenceTransitionService extends IntentService {
     }
 
     private void notifyTransition(int transitionCode, List<Geofence> geofences) {
+        Log.i(TAG, "transitionCode: " + transitionCode +" // nbGeofences: "+geofences.size());
+
+        int size = geofences.size();
+        String[] geofencesID = new String[size];
+        for (int i = 0; i < size; i++) {
+            geofencesID[i] = geofences.get(i).getRequestId();
+        }
+
         Intent i = new Intent(TRANSITION_EVENT);
         i.putExtra("transitionCode", transitionCode);
-        i.putExtra("geofences", geofences.toArray());
+        i.putExtra("geofences", geofencesID);
         GeofenceTransitionService.this.sendBroadcast(i);
     }
 }
