@@ -2,10 +2,15 @@
     "groupName": "UBS",
     "poiList" : [
         {
-            "id":"ensibs", 
+            "id":"ENSIBS", 
             "lat":"47.644834",
             "lon":"-2.748417",
-            "radius":"500"
+            "radius":"20"
+        },{
+            "id":"RU", 
+            "lat":"47.645677",
+            "lon":"-2.747464",
+            "radius":"20"
         }
     ]
 }

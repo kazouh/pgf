@@ -23,8 +23,8 @@ import net.bagot.pgf.util.GeofenceHelper;
 import java.util.List;
 import java.util.Set;
 
-public class MainActivity extends Activity {
-    private static final String TAG = "MainActivity";
+public class App extends Activity {
+    private static final String TAG = "App";
     private static final int READ_REQUEST_CODE = 1337;
 
     private ArrayAdapter<String> listAdapter;
@@ -63,6 +63,7 @@ public class MainActivity extends Activity {
                     Set<String> groupNames = poi.getGroupNames();
                     for (String group : groupNames) {
                         List<Geofence> poiList = poi.getPOIForGroupName(group);
+                        Log.i(TAG, "tracking :" + group +" // nbPOI : "+poiList.size());
                         geofences.register(poiList);
                     }
                 } else {
